@@ -24,15 +24,15 @@ jobs:
     needs: [build-temp-container]
     runs-on: ubuntu-latest
     steps:
-      - name: Download Docker Image (Artifact)
-        uses: actions/download-artifact@v2
-        with:
-          name: docker-artifact
-          path: artifacts
-      - name: Run test in Docker
-        run: |
-          cd artifacts
-          docker load < docker-image.tar
+    - name: Download Docker Image (Artifact)
+      uses: actions/download-artifact@v2
+      with:
+        name: docker-artifact
+        path: artifacts
+    - name: Run test in Docker
+      run: |
+        cd artifacts
+        docker load < docker-image.tar
   
     - uses: actions/checkout@master
       
