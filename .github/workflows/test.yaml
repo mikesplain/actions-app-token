@@ -9,17 +9,30 @@ jobs:
       
       - name: build-temp-container
         run: |
-          echo ${PASSWORD} | docker login -u $USERNAME --password-stdin
-          docker build -t hamelsmu/app-token:temp -f prebuild.Dockerfile .
-          docker push hamelsmu/app-token:temp
+          docker build -t app-token:temp -f prebuild.Dockerfile .
+          mkdir -p artifacts
+          docker save app-token:temp > artifacts/docker-image.tar
         env:
           USERNAME: ${{ secrets.DOCKER_USERNAME }}
           PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+      - uses: actions/upload-artifact@v2
+        with:
+          name: docker-artifact
+          path: artifacts
 
   test-container:
     needs: [build-temp-container]
     runs-on: ubuntu-latest
     steps:
+      - name: Download Docker Image (Artifact)
+        uses: actions/download-artifact@v2
+        with:
+          name: docker-artifact
+          path: artifacts
+      - name: Run test in Docker
+        run: |
+          cd artifacts
+          docker load < docker-image.tar
   
     - uses: actions/checkout@master
       
@@ -32,20 +45,11 @@ jobs:
     # tested with https://github.com/apps/fastpages-chatops
     - name: test
       id: test
-      uses: docker://hamelsmu/app-token:temp
+      uses: docker://app-token:temp
       env:
         INPUT_APP_PEM: ${{ secrets.APP_PEM }}
         INPUT_APP_ID: ${{ secrets.APP_ID }}
 
-    - name: pre-build action image
-      run: |
-        cd $GITHUB_WORKSPACE
-        echo ${PASSWORD} | docker login -u $USERNAME --password-stdin
-        docker build -t hamelsmu/app-token -f prebuild.Dockerfile .
-        docker push hamelsmu/app-token 
-      env:
-        USERNAME: ${{ secrets.DOCKER_USERNAME }}
-        PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
 
        # tested withhttps://github.com/apps/fastpages-chatops
     - name: final-test
