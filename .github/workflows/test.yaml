@@ -9,7 +9,7 @@ jobs:
       
       - name: build-temp-container
         run: |
-          docker build -t app-token:temp -f prebuild.Dockerfile .
+          docker build -t app-token:temp .
           mkdir -p artifacts
           docker save app-token:temp > artifacts/docker-image.tar
         env:
