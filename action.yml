@@ -16,4 +16,4 @@ branding:
   icon: 'unlock'
 runs:
   using: 'docker'
-  image: 'Dockerfile'
+  image: 'docker://ghcr.io/mikesplain/actions-app-token:main'
