@@ -1,7 +1,14 @@
-FROM python:3.6-slim-stretch
+FROM python:3.10-slim
+
+RUN apt-get update && \
+    apt-get install \
+        gcc \
+        openssl \
+        libssl-dev \
+        -yq
 
 RUN pip install \
-    cryptography==2.6.1 \
+    cryptography==2.8 \
     github3.py==1.3.0 \
     jwcrypto==0.6.0 \
     pyjwt==1.7.1
