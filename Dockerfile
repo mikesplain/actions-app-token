@@ -5,6 +5,7 @@ RUN apt-get update && \
         gcc \
         openssl \
         libssl-dev \
+        libffi-dev \
         -yq
 
 RUN pip install \
